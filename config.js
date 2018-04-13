@@ -20,10 +20,10 @@ const config = {
     // 是否关闭自动跳转页面
     disable: false,
     // 跳转时间间隔 s
-    jumpInterval: 2,
+    jumpInterval: 1,
     // 跳转文章发布时间范围
-    minTime: new Date(2018, 0, 1),
-    maxTime: new Date(2018, 2, 1),
+    minTime: new Date(2010, 1, 1),
+    maxTime: new Date(),
     // 已有数据的文章是否再抓取
     isCrawlExist: false,
     // if true updateNumAt - publishAt
@@ -31,25 +31,25 @@ const config = {
     // 抓取公众号biz范围
     targetBiz: [],
     // 是否保存文章内容
-    isSavePostContent: false,
+    isSavePostContent: true,
     // 保存内容的形式: html/text
-    saveContentType: 'text',
+    saveContentType: 'html',
   },
   insertJsToNextProfile: {
     // 是否关闭自动跳转页面
     disable: false,
     // 仅scroll 不跳转
-    onlyScroll: true,
+    onlyScroll: false,
     // 跳转时间间隔 s
     jumpInterval: 10,
     // 抓取到minTime就跳转至下一公众号
-    minTime: new Date(2018, 0, 1),
+    minTime: new Date(2018, 1, 1),
     // 自定义最近多久更新的公众号本次就不用抓取
-    maxUpdatedAt: new Date(2018, 2, 15),
+    maxUpdatedAt: new Date(2018, 4, 10),
     // 抓取公众号biz范围
     targetBiz: [],
     // 程序开始时间
-    beginTime: new Date()
+    beginTime: new Date(),
   },
   // 是否抓取评论
   isCrawlComments: true
@@ -57,9 +57,10 @@ const config = {
 
 try {
   // 引入外部biz文件
-  fs.accessSync('./targetBiz.json');
-  config.insertJsToNextProfile.targetBiz = require('./targetBiz.json');
-  config.insertJsToNextPage.targetBiz = require('./targetBiz.json');
+  fs.accessSync('./bizList.json');
+  fs.accessSync('./bizContent.json');
+  config.insertJsToNextProfile.targetBiz = require('./bizList.json');
+  config.insertJsToNextPage.targetBiz = require('./bizContent.json');
 } catch(e) {
   // Do nothing
 }

@@ -28,11 +28,11 @@ if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
 }
 
 const options = {
-  port: 8101,
+  port: 8001,
   rule: require('./rule'),
   webInterface: {
-    enable: false,
-    webPort: 8102
+    enable: true,
+    webPort: 8002
   },
 
   // 默认不限速
@@ -51,8 +51,8 @@ const proxyServer = new AnyProxy.ProxyServer(options);
 
 proxyServer.on('ready', () => {
   const ipAddress = ip.address();
-  log(`请配置代理: ${ipAddress}:8101`);
-  log('可视化界面: http://localhost:8104\n');
+  log(`请配置代理: ${ipAddress}:8001`);
+  log('可视化界面: http://localhost:8004\n');
 });
 proxyServer.on('error', (e) => {
   throw e;
@@ -66,4 +66,4 @@ redis('del', POST_LIST_KEY, PROFILE_LIST_KEY).then(() => {
 // when finished
 // proxyServer.close();
 
-require('./server').listen(8104);
+require('./server').listen(8004);
