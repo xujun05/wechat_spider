@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import { Provider, connect } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reducer from './reducers';
+import { closeMessage } from './actions';
+import Dialog from 'material-ui/Dialog';
 import { Router, Route, IndexRoute } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
@@ -30,6 +32,7 @@ let store = createStore(
 import Posts from './containers/posts.jsx';
 import Profiles from './containers/profiles.jsx';
 import Categories from './containers/categories.jsx';
+import Doc from './containers/doc.jsx';
 
 class App extends React.Component {
 
@@ -38,7 +41,7 @@ class App extends React.Component {
   }
 
   render() {
-    let { history } = this.props;
+    const { history, message, dispatch } = this.props;
     return (
       <MuiThemeProvider>
         <div>
@@ -48,11 +51,21 @@ class App extends React.Component {
               <ListItem primaryText="文章" onClick={() => { history.push('/posts'); }} />
               <ListItem primaryText="公众号" onClick={() => { history.push('/profiles'); }} />
               <ListItem primaryText="分类" onClick={() => { history.push('/categories'); }} />
+              <ListItem primaryText="配置" onClick={() => { history.push('/conf'); }} />
+              <a href="https://github.com/lqqyt2423/wechat_spider" target="_blank" rel="noopener noreferrer"><ListItem primaryText="GitHub" /></a>
             </List>
           </Drawer>
           <div className="wrapper">
             {this.props.children}
           </div>
+          <Dialog
+            open={message.open}
+            onRequestClose={() => {
+              dispatch(closeMessage());
+            }}
+          >
+            {message.content}
+          </Dialog>
         </div>
       </MuiThemeProvider>
     );
@@ -72,8 +85,16 @@ render(
         <Route path="/" component={connectedApp}>
           <IndexRoute component={Posts} />
           <Route path="/posts" component={Posts} />
+          <Route path="/posts/:id" component={Doc} />
+          <Route path="/posts/:id/edit" component={Doc} />
           <Route path="/profiles" component={Profiles} />
+          <Route path="/profiles/:id" component={Doc} />
+          <Route path="/profiles/:id/edit" component={Doc} />
           <Route path="/categories" component={Categories} />
+          <Route path="/categories/:id" component={Doc} />
+          <Route path="/categories/:id/edit" component={Doc} />
+          <Route path="/conf" component={Doc} />
+          <Route path="/conf/edit" component={Doc} />
         </Route>
       </Router>
     </Provider>

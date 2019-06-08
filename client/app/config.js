@@ -1,14 +1,13 @@
-const ENV = process.env.NODE_ENV || 'development';
-const config = {};
+// const ENV = process.env.NODE_ENV || 'development';
 
-if (ENV === 'development') {
-  config.posts = '/api/posts';
-  config.profiles = '/api/profiles';
-  config.cates = '/api/categories';
-} else {
-  config.posts = '/api/posts';
-  config.profiles = '/api/profiles';
-  config.cates = '/api/categories';
-}
+const config = {
+  posts: '/api/posts',
+  post: '/api/posts',
+  profiles: '/api/profiles',
+  profile: '/api/profiles',
+  cates: '/api/categories',
+  cate: '/api/categories',
+  conf: '/api/conf',
+};
 
 export default config;

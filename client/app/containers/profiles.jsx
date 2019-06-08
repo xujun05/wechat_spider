@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchProfiles, assembleUrl } from '../actions';
+import { fetchProfiles } from '../actions';
 import Loading from '../components/loading.jsx';
 import moment from 'moment';
 import Paginator from '../components/paginator.jsx';
 import { Link } from 'react-router';
-import SearchInput from '../components/searchInput.jsx';
+import Search from './search.jsx';
 
 class Profiles extends React.Component {
 
@@ -19,6 +19,7 @@ class Profiles extends React.Component {
     dispatch(fetchProfiles(location.query));
   }
 
+  // eslint-disable-next-line
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.search !== this.props.location.search) {
       let { dispatch } = this.props;
@@ -38,35 +39,6 @@ class Profiles extends React.Component {
     return searchArgs;
   }
 
-  renderSearch() {
-    const { location } = this.props;
-    const { pathname } = location;
-    const { history } = this.props;
-    const searchArgs = this.returnCurrentSearchArgs();
-    const { q = '' } = searchArgs;
-    const nextQuery = { ...searchArgs };
-
-    // 去掉分页query
-    if (nextQuery.page) delete nextQuery.page;
-    return (
-      <div style={{
-        padding: '0px 5px 10px 5px'
-      }}>
-        <SearchInput
-          value={q}
-          hintText="搜索公众号..."
-          fullWidth={true}
-          onEnter={q => {
-            if (q) nextQuery.q = q;
-            if (!q && nextQuery.q) delete nextQuery.q;
-            const path = assembleUrl(pathname, nextQuery);
-            history.push(path);
-          }}
-        />
-      </div>
-    );
-  }
-
   render() {
     let { isFetching, profiles, history, location } = this.props;
     let { search, pathname } = location;
@@ -74,10 +46,16 @@ class Profiles extends React.Component {
     let metadata = profiles.metadata;
     return (
       <div>
-        {this.renderSearch()}
+        <Search
+          location={location}
+          history={history}
+          searchArgs={this.returnCurrentSearchArgs()}
+          defaultText="搜索公众号..."
+        />
         <table className="table table-striped">
           <thead>
             <tr>
+              <th>ID</th>
               <th>更新时间</th>
               <th>头像</th>
               <th>公众号</th>
@@ -87,13 +65,15 @@ class Profiles extends React.Component {
               <th>有数据</th>
               <th>差</th>
               <th>MsgBiz</th>
+              <th>详情</th>
             </tr>
           </thead>
           <tbody>
             {
               profiles.data.map(profile => {
                 return (
-                  <tr key={profile._id}>
+                  <tr key={profile.id}>
+                    <td>{profile.id}</td>
                     <td>{profile.openHistoryPageAt ? moment(profile.openHistoryPageAt).format('YY-MM-DD HH:mm') : ''}</td>
                     <td><img style={{ height: '24px', marginRight: '3px' }} src={profile.headimg} className="img-circle" /></td>
                     <td><Link to={`/posts?msgBiz=${profile.msgBiz}`}>{profile.title}</Link></td>
@@ -103,6 +83,7 @@ class Profiles extends React.Component {
                     <td>{profile.postsHasDataCount}</td>
                     <td>{profile.postsAllCount - profile.postsHasDataCount}</td>
                     <td>{profile.msgBiz}</td>
+                    <td><Link to={`/profiles/${profile.id}`}>详情</Link></td>
                   </tr>
                 );
               })

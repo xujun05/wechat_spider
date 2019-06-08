@@ -20,4 +20,6 @@ const Comment = new Schema({
 
 Comment.plugin(require('mongoose-timestamp'));
 
+Comment.index({ contentId: 1 }, { unique: true });
+
 mongoose.model('Comment', Comment);

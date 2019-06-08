@@ -5,9 +5,12 @@ const exec = require('child_process').exec;
 const ip = require('ip');
 const { log } = console;
 const config = require('./config');
-const redis = require('./utils/redis');
+const utils = require('./utils');
 
-const { POST_LIST_KEY, PROFILE_LIST_KEY } = config.redis;
+const {
+  anyproxy: anyproxyConfig,
+  serverPort,
+} = config;
 
 // 引导安装HTTPS证书
 if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
@@ -27,43 +30,61 @@ if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
   });
 }
 
-const options = {
-  port: 8001,
+//<<<<<<< HEAD
+//const options = {
+//  port: 8001,
+//  rule: require('./rule'),
+//  webInterface: {
+//    enable: true,
+//    webPort: 8002
+//  },
+//
+//// 默认不限速
+//  // throttle: 10000,
+//
+//  // 强制解析所有HTTPS流量
+//  forceProxyHttps: true,
+//
+//  // 不开启websocket代理
+//  wsIntercept: false,
+//
+//  silent: true
+//};
+//=======
+const proxyServer = new AnyProxy.ProxyServer({
+  ...anyproxyConfig,
+
+  // 所有的抓取规则
   rule: require('./rule'),
-  webInterface: {
-    enable: true,
-    webPort: 8002
-  },
-
-  // 默认不限速
-  // throttle: 10000,
-
-  // 强制解析所有HTTPS流量
-  forceProxyHttps: true,
-
-  // 不开启websocket代理
-  wsIntercept: false,
-
-  silent: true
-};
-
-const proxyServer = new AnyProxy.ProxyServer(options);
+});
 
 proxyServer.on('ready', () => {
   const ipAddress = ip.address();
+//<<<<<<< HEAD
+//  log(`请配置代理: ${ipAddress}:8001`);
+//  log('可视化界面: http://localhost:8004\n');
+//=======
   log(`请配置代理: ${ipAddress}:8001`);
-  log('可视化界面: http://localhost:8004\n');
 });
+
 proxyServer.on('error', (e) => {
   throw e;
 });
 
 // 删除redis中对应缓存后再启动
-redis('del', POST_LIST_KEY, PROFILE_LIST_KEY).then(() => {
+utils.delCrawlLinkCache().then(() => {
   proxyServer.start();
+}, e => {
+  console.log('Error when del redis cache');
+  console.log(e);
 });
 
 // when finished
 // proxyServer.close();
 
-require('./server').listen(8004);
+//<<<<<<< HEAD
+//require('./server').listen(8004);
+//=======
+require('./server').listen(serverPort, () => {
+  log('可视化界面: http://localhost:8004');
+});
