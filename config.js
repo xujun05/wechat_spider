@@ -13,9 +13,9 @@ const config = {
     PROFILE_LIST_KEY: 'wechat_spider:profile_list'
   },
   // 是否用本地图片替换所有的图片请求 加快网络速度
-  isReplaceImg: true,
+  isReplaceImg: false,
   // 是否替换显示在手机上的微信文章正文内容 加快网路速度
-  isReplacePostBody: true,
+  isReplacePostBody: false,
   insertJsToNextPage: {
     // 是否关闭自动跳转页面
     disable: false,
@@ -43,9 +43,9 @@ const config = {
     // 跳转时间间隔 s
     jumpInterval: 5,
     // 抓取到minTime就跳转至下一公众号
-    minTime: new Date(2018, 1, 1),
+    minTime: new Date(2018, 6, 10), 
     // 自定义最近多久更新的公众号本次就不用抓取
-    maxUpdatedAt: new Date(2018, 4, 10),
+    maxUpdatedAt: new Date(2018,6,10),
     // 抓取公众号biz范围
     targetBiz: [],
     // 程序开始时间
