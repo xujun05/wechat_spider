@@ -56,7 +56,7 @@ const config = {
       jumpInterval: 1,
 
       // 跳转文章发布时间范围
-      minTime: new Date(2010, 1, 1),
+      minTime: new Date(2018, 1, 1),
       maxTime: new Date(),
 
       // 已经抓取过的文章是否需要再次抓取
@@ -91,7 +91,7 @@ const config = {
       minTime: new Date('2018-06-01'),
 
       // 控制在此时间后已经抓取过的公众号本次就不用再抓取了
-      maxUpdatedAt: new Date('2019-06-08'),
+      maxUpdatedAt: new Date(),
 
       // 抓取公众号 biz 范围 [string]
       // 为空表示不限制范围
