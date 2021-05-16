@@ -3,21 +3,21 @@
 const AnyProxy = require('anyproxy');
 const exec = require('child_process').exec;
 const ip = require('ip');
-const { log } = console;
 const config = require('./config');
 const utils = require('./utils');
+const logger = require('./utils/logger');
 
 const {
   anyproxy: anyproxyConfig,
   serverPort,
 } = config;
 
-// 引导安装HTTPS证书
+// 引导安装 HTTPS 证书
 if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
   AnyProxy.utils.certMgr.generateRootCA((error, keyPath) => {
     if (!error) {
       const certDir = require('path').dirname(keyPath);
-      log('The cert is generated at', certDir);
+      logger.info('The cert is generated at %s', certDir);
       const isWin = /^win/.test(process.platform);
       if (isWin) {
         exec('start .', { cwd: certDir });
@@ -25,32 +25,12 @@ if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
         exec('open .', { cwd: certDir });
       }
     } else {
-      console.error('error when generating rootCA', error);
+      logger.error(error);
     }
   });
 }
 
-//<<<<<<< HEAD
-//const options = {
-//  port: 8001,
-//  rule: require('./rule'),
-//  webInterface: {
-//    enable: true,
-//    webPort: 8002
-//  },
-//
-//// 默认不限速
-//  // throttle: 10000,
-//
-//  // 强制解析所有HTTPS流量
-//  forceProxyHttps: true,
-//
-//  // 不开启websocket代理
-//  wsIntercept: false,
-//
-//  silent: true
-//};
-//=======
+const ipAddress = ip.address();
 const proxyServer = new AnyProxy.ProxyServer({
   ...anyproxyConfig,
 
@@ -59,24 +39,18 @@ const proxyServer = new AnyProxy.ProxyServer({
 });
 
 proxyServer.on('ready', () => {
-  const ipAddress = ip.address();
-//<<<<<<< HEAD
-//  log(`请配置代理: ${ipAddress}:8001`);
-//  log('可视化界面: http://localhost:8004\n');
-//=======
-  log(`请配置代理: ${ipAddress}:8001`);
+  logger.info('请配置HTTP代理: %s:8001', ipAddress);
 });
 
 proxyServer.on('error', (e) => {
-  throw e;
+  logger.error(e);
 });
 
-// 删除redis中对应缓存后再启动
+// 删除 redis 中对应缓存后再启动
 utils.delCrawlLinkCache().then(() => {
   proxyServer.start();
 }, e => {
-  console.log('Error when del redis cache');
-  console.log(e);
+  logger.error(e);
 });
 
 // when finished
@@ -86,5 +60,5 @@ utils.delCrawlLinkCache().then(() => {
 //require('./server').listen(8004);
 //=======
 require('./server').listen(serverPort, () => {
-  log('可视化界面: http://localhost:8004');
+  logger.info('数据管理页面: http://%s:8004', ipAddress);
 });
